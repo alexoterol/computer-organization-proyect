@@ -15,6 +15,8 @@ newSection:     .asciiz "\n---------------------------------\n"
   # buffer quiere que el usuario digite 1 y 0's hasta llegar a un número en binario de 8 dígitos para proceder a calcular...
 buffer:         .space 9 # Espacio para 8 caracteres + terminador nulo
 
+seed:           .word  12345  # Semilla inicial para el generador aleatorio
+
   # .text no es necesario
   .text
 
@@ -26,7 +28,7 @@ main:
   li $v0, 4
   la $a0, newLine
   syscall
-  
+
   li $v0, 4
   la $a0, newSection
   syscall
@@ -149,8 +151,11 @@ endBinToDec:
 
   # Generar Número Aleatorio
 generateRand:
-  # Simular la generación de un número aleatorio (usaremos un valor fijo para simplicidad)
-  li $t0, 25                  # Usar un valor fijo como ejemplo de número aleatorio
+  # Llamada a la funcion para obtener el numero aleatorio
+  jal generarAleatorio    
+  # Despues de retornar, $a0 contiene el numero
+  
+  move $t0, $a0     # Mover el numero aleatorio a $t0
 
   li $v0, 4
   la $a0, newSection
@@ -169,7 +174,6 @@ generateRand:
   li $v0, 4
   la $a0, newLine
   syscall
-
 
   # Llamar a la función decimalToBinRand para imprimir el número en binario
   jal decimalToBinRand        # Llamar a la función para convertir y mostrar en binario
@@ -209,6 +213,39 @@ nextBitRand:
 endConversionRand:
   jr $ra                      # Volver a la función que llamó
 
+generarAleatorio:             # Funcion para generar un numero aleatorio
+  # Cargar la semilla actual desde la memoria
+  lw $t4, seed               # $t4 = semilla actual
+
+  # Parámetros del LCG (Generador Congruencial Lineal)
+  li $t5, 16645            # a = 16645 (multiplicador)
+  li $t6, 10139042         # c = 10139042 (incremento)
+
+  # Calcular (a * semilla) + c
+  mul $t7, $t4, $t5          # $t7 = a * semilla
+  addu $t7, $t7, $t6          # $t7 = a * semilla + c
+
+  # Actualizar la semilla: (a * semilla + c) mod m
+  li $t8, 1
+  sll $t8, $t8, 12
+  div $t7, $t8
+  mfhi $t7
+  sw $t7, seed               # Guardar la nueva semilla en memoria
+
+  # Ahora, escalar el número aleatorio al rango [10, 50]
+  # Primero, calcular R mod 41, ya que 50 - 10 + 1 = 41
+  li $t8, 41                 # Cargar el valor 41 en $t8
+  div $t7, $t8               # Dividir $t7 entre 41
+  mfhi $t9                   # $t9 = R mod 41 (resto de la división)
+
+  # Añadir 10 para desplazar el rango a [10, 50]
+  addiu $t9, $t9, 10          # $t9 = (R mod 41) + 10
+
+  # Mover el resultado final al registro $a0 para su posterior uso (por ejemplo, impresión)
+  move $a0, $t9              # $a0 = número aleatorio en [10, 50]
+
+  # Retornar al llamador de la función
+  jr $ra                     # Salir de la función y regresar al punto de llamada
 
 
   # Salir del programa
