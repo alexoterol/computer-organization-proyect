@@ -11,7 +11,7 @@ binarioOut:     .asciiz "Binario: "
 salida:         .asciiz "\nSaliendo del programa.\n"
 aleatorio:      .asciiz "\nNúmero aleatorio: "
 newLine:        .asciiz "\n"
-newSection:     .asciiz "\n---------------------------------\n"
+newSection:     .asciiz "\n------------------------------------------------------\n"
   # buffer quiere que el usuario digite 1 y 0's hasta llegar a un número en binario de 8 dígitos para proceder a calcular...
 buffer:         .space 9 # Espacio para 8 caracteres + terminador nulo
 
