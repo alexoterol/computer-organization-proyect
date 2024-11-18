@@ -2,7 +2,7 @@
 .data
 # Definimos strings para el menú y mensajes
 # .ascizz es para declarar una cadena de texto terminada con un carácter nulo.
-menu:           .asciiz "\nMenú:\n1. Convertir Decimal a Binario\n2. Convertir Binario a Decimal\n3. Generar un número aleatorio\n4. Salir\nSeleccione una opción: "
+menu:           .asciiz "\nMenú Interactivo:\n1. Convertir Decimal a Binario\n2. Convertir Binario a Decimal\n3. Generar un número aleatorio\n4. Salir\n\nSeleccione una opción: "
 ingresarDec:    .asciiz "Ingrese un número decimal: "
 ingresarBin:    .asciiz "Ingrese un número binario de 8 bits: "
 errorBin:       .asciiz "Error: El número binario debe contener solo '0' o '1'.\n"
